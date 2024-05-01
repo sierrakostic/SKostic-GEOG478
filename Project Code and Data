@@ -1,1 +1,973 @@
+<!DOCTYPE html>
+<html lang="en">
+
+
+
+
+<head>
+   <meta charset="UTF-8">
+   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+   <title>Display a map</title>
+   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
+   <style>
+      
+       body {
+       background-image: linear-gradient(rgba(0,0,0,0.5),rgba(0,0,0,0.5),rgba(0,0,0,0.5)),url(https://media.istockphoto.com/id/1356792344/photo/in-winter-running-sports-shoe-woman-running-in-the-forest.jpg?s=612x612&w=0&k=20&c=KVFkgNF2_qpgke30f51BCqnYcVUdCTofhqVQVUkqMoM=);
+       background-repeat: no-repeat;
+       background-attachment: fixed;
+       background-size: cover;
+   }
+
+
+       h1 {
+         color: white;
+         text-align: center;
+         font-size: 50px;
+       }
+       h4 {
+           color: white;
+           text-align: center;
+           font-size: 18px;
+       }
+
+
+
+
+       h2,
+       h3,
+       p,
+       ul,
+       ol {
+           color: white;
+       }
+
+
+
+
+     
+
+
+
+
+       #map {
+           position: relative;
+           top: 0;
+           right: 0;
+           bottom: 0;
+           left: 0;
+           height: 600px;
+           width: 800px;
+           margin: 0 auto;
+       }
+
+
+
+
+       #map-controls {
+           padding: 10px;
+           border: 1px solid #6d6d6d;
+           border-radius: 5px;
+           background-color: #969796  ;
+           width: 300px;
+           margin: 0 auto;
+           text-align: left;
+           position: relative;
+       }
+
+
+
+
+       #submitBtn {
+           width: 100%;
+           height: 40px;
+           cursor: pointer;
+       }
+
+
+
+
+       table {
+           margin: 0 auto;
+           border-collapse: collapse;
+           border: 1px solid #969796 ;
+       }
+
+
+
+
+       table th,
+       table td {
+           padding: 8px;
+           border: 1px solid #6d6d6d;
+           background-color:  #BFC4BD;
+       }
+     nav {
+       width: 100%;
+       display: flex;
+       align-items: center;
+       justify-content: space-between;
+       padding: 20px 0;
+     }
+     nav ul li {
+       display: inline-block;
+       list-style: none;
+       margin: 10px 30px;
+     }
+     nav ul li a{
+       text-decoration: none;
+       color: #fff;
+       padding: 5px 20px;
+       border: 1px solid transparent;
+       transition: 0.5 ease;
+     }
+       nav ul li a:hover{
+           background-color: #fff;
+           color: #000;
+         }
+       nav ul li.active a{
+         background-color: #fff;
+           color: #000;
+         }
+   </style>
+</head>
+
+
+
+
+<body>
+ <div class="header">
+   <nav>
+   <ul>
+     <li class="active"><a href="file:///Users/sierrakostic/Downloads/test2.html"><i class="fa fa-about"></i>Home</a></li>
+   <li><a href="file:///Users/sierrakostic/Downloads/goal.html">Goal</a></li>
+   <li><a href="file:///Users/sierrakostic/Downloads/Contact.html">Survey</a></li>
+
+
+ </ul>
+</nav>
+ </div>
+    <div class="title">
+     <h1>Visualizing Bicycle and Exercise Segments with JavaScript</h1>
+   </div>
+   <h4>Created by: Connor Gooch, Ethan John, Cameron Hurst, Sierra Kostic, and Winston Waldrip</h4>
+   <p style="text-align: center;">Group Project for WebGIS at Texas A&M University</p>
+  <br>
+   <div id="map-controls">
+       <label for="startLat">Starting Latitude:</label>
+       <input type="text" id="startLat" value="30.616734">
+       <br>
+       <label for="startLng">Starting Longitude:</label>
+       <input type="text" id="startLng" value="-96.339208">
+       <br>
+       <label for="zoomLevel">Zoom Level:</label>
+       <input type="text" id="zoomLevel" value="12">
+       <br>
+       <button id="submitBtn">Update Map</button>
+   </div>
+   <br>
+   <div id="map">
+       <a href="https://www.maptiler.com"><img src="https://api.maptiler.com/resources/logo.svg"
+               alt="MapTiler logo"></a>
+   </div>
+   <br>
+   <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+   <script src="Polyline.encoded.js"></script>
+   <script src="Strava_api.js"></script>
+ </body>
+</html>
+
+
+Code for goal page (goal.html)
+<!DOCTYPE html>
+<html>
+ <head>
+   <title>Goal</title>
+   <style>
+     body {
+       background-image: linear-gradient(rgba(0,0,0,0.5),rgba(0,0,0,0.5),rgba(0,0,0,0.5)),url(https://media.istockphoto.com/id/1356792344/photo/in-winter-running-sports-shoe-woman-running-in-the-forest.jpg?s=612x612&w=0&k=20&c=KVFkgNF2_qpgke30f51BCqnYcVUdCTofhqVQVUkqMoM=);
+       background-repeat: no-repeat;
+       background-attachment: fixed;
+       background-size: cover;
+   }
+   nav {
+       width: 100%;
+       display: flex;
+       align-items: center;
+       justify-content: space-between;
+       padding: 20px 0;
+     }
+     nav ul li {
+       display: inline-block;
+       list-style: none;
+       margin: 10px 30px;
+     }
+     nav ul li a{
+       text-decoration: none;
+       color: #fff;
+       padding: 5px 20px;
+       border: 1px solid transparent;
+       transition: 0.5 ease;
+     }
+       nav ul li a:hover{
+           background-color: #fff;
+           color: #000;
+         }
+       nav ul li.active a{
+         background-color: #fff;
+           color: #000;
+         }
+         h1 {
+         color: white;
+         text-align: center;
+         font-size: 50px;
+       }
+       .goal {
+           color:#fff;
+           text-align: center;
+           font-size: 20px;
+           position: fixed;
+           top: 50%;
+           left: 50%;
+           transform: translate(-50%, -50%);
+       }
+     </style>
+ </head>
+ <body>
+   <div class="header">
+       <nav>
+       <ul>
+         <li><a href="file:///Users/sierrakostic/Downloads/test2.html">Home</a></li>
+       <li class="active"><a href="file:///Users/sierrakostic/Downloads/goal.html"><i class="a fa-about"></i>Goal</a></li>
+       <li><a href="file:///Users/sierrakostic/Downloads/Contact.html">Survey</a></li>
+     </ul>
+   </nav>
+     </div>
+     <div class="title">
+       <h1>Goal</h1>
+     </div>
+     <div class="goal">
+       <h2> We hope to achieve a fully interactable segment map, containing data from various sources and be able to view
+           and interact with, each with a specific classification that will help with understanding and user
+           experience. Additionally, various other data such as air quality, pollution, and local information could be
+           added and represented in the output.</h2>
+
+
+          
+     </div>
+    
+ </body>
+</html>
+
+
+
+Code for survey page (survey.html)
+
+<!DOCTYPE html>
+<html>
+ <head>
+   <title>Contact Us!</title>
+   <style>
+     body {
+       background-image: linear-gradient(rgba(0,0,0,0.5),rgba(0,0,0,0.5),rgba(0,0,0,0.5)),url(https://media.istockphoto.com/id/1356792344/photo/in-winter-running-sports-shoe-woman-running-in-the-forest.jpg?s=612x612&w=0&k=20&c=KVFkgNF2_qpgke30f51BCqnYcVUdCTofhqVQVUkqMoM=);
+       background-repeat: no-repeat;
+       background-attachment: fixed;
+       background-size: cover;
+   }
+   nav {
+       width: 100%;
+       display: flex;
+       align-items: center;
+       justify-content: space-between;
+       padding: 20px 0;
+     }
+     nav ul li {
+       display: inline-block;
+       list-style: none;
+       margin: 10px 30px;
+     }
+     nav ul li a{
+       text-decoration: none;
+       color: #fff;
+       padding: 5px 20px;
+       border: 1px solid transparent;
+       transition: 0.5 ease;
+     }
+       nav ul li a:hover{
+           background-color: #fff;
+           color: #000;
+         }
+       nav ul li.active a{
+         background-color: #fff;
+           color: #000;
+         }
+         h1 {
+         color: white;
+         text-align: center;
+         font-size: 50px;
+       }
+       .goal {
+           color:#fff;
+           text-align: center;
+           font-size: 20px;
+       }
+       input[type=text], select, textarea {
+ width: 100%; /* Full width */
+ padding: 12px; /* Some padding */
+ border: 1px solid #ccc; /* Gray border */
+ border-radius: 4px; /* Rounded borders */
+ box-sizing: border-box; /* Make sure that padding and width stays in place */
+ margin-top: 6px; /* Add a top margin */
+ margin-bottom: 16px; /* Bottom margin */
+ resize: vertical /* Allow the user to vertically resize the textarea (not horizontally) */
+}
+
+
+/* Style the submit button with a specific background color etc */
+input[type=submit] {
+ background-color: #04AA6D;
+ color: white;
+ padding: 12px 20px;
+ border: none;
+ border-radius: 4px;
+ cursor: pointer;
+}
+
+
+/* When moving the mouse over the submit button, add a darker green color */
+input[type=submit]:hover {
+ background-color: #45a049;
+}
+
+
+/* Add a background color and some padding around the form */
+.container {
+ border-radius: 5px;
+ background-color: #f2f2f2;
+ padding: 20px;
+}
+     </style>
+ </head>
+ <body>
+   <div class="header">
+       <nav>
+       <ul>
+         <li><a href="file:///Users/sierrakostic/Downloads/test2.html">Home</a></li>
+       <li><a href="file:///Users/sierrakostic/Downloads/goal.html">Goal</a></li>
+       <li class="active"><a href="file:///Users/sierrakostic/Downloads/Contact.html"><i class="a fa-about"></i>Survey</a></li>
+     </ul>
+   </nav>
+     </div>
+     <div class="title">
+       <h1>Feedback Survey</h1>
+     </div>
+     <div class="container">
+       <form action="action_page.php">
+    
+         <label for="fname">First Name</label>
+         <input type="text" id="fname" name="firstname" placeholder="Your first name">
+    
+         <label for="lname">Last Name</label>
+         <input type="text" id="lname" name="lastname" placeholder="Your last name">
+    
+         <label for="state">State</label>
+         <select id="state" name="state">
+           <option value="alabama">Alabama</option>
+           <option value="Alaska">Alaska</option>
+           <option value="arizona">Arizona</option>
+           <option value="arkansas">Arkansas</option>
+           <option value="california">California</option>
+           <option value="colorado">Colorado</option>
+           <option value="connecticut">Connecticut</option>
+           <option value="delaware">Delaware</option>
+           <option value="florida">Florida</option>
+           <option value="Georgia">Georgia</option>
+           <option value="Hawaii">Hawaii</option>
+           <option value="Idaho">Idaho</option>
+           <option value="Illinois">Illinois</option>
+           <option value="Indiana">Indiana</option>
+           <option value="Iowa">Iowa</option>
+           <option value="Kansas">Kansas</option>
+           <option value="Kentucky">Kentucky</option>
+           <option value="Louisiana">Louisiana</option>
+           <option value="Maine">Maine</option>
+           <option value="Maryland">Maryland</option>
+           <option value="Massachusetts">Massachusetts</option>
+           <option value="Michigan">Michigan</option>
+           <option value="Minnesota">Minnesota</option>
+           <option value="Mississippi">Mississippi</option>
+           <option value="Missouri">Missouri</option>
+           <option value="Montana">Montana</option>
+           <option value="Nebraska">Nebraska</option>
+           <option value="Nevada">Nevada</option>
+           <option value="New Hampshire">New Hampshire</option>
+           <option value="New Jersey">New Jersey</option>
+           <option value="New Mexico">New Mexico</option>
+           <option value="New York">New York</option>
+           <option value="North Carolina">North Carolina</option>
+           <option value="North Dakota">North Dakota</option>
+           <option value="Ohio">Ohio</option>
+           <option value="Oklahoma">Oklahoma</option>
+           <option value="Oregon">Oregon</option>
+           <option value="Pennsylvania">Pennsylvania</option>
+           <option value="Rhode Island">Rhode Island</option>
+           <option value="South Carolina">South Carolina</option>
+           <option value="South Dakota">South Dakota</option>
+           <option value="Tennessee">Tennessee</option>
+           <option value="Texas">Texas</option>
+           <option value="Utah">Utah</option>
+           <option value="vermont">Vermont</option>
+           <option value="Virginia">Virginia</option>
+           <option value="Washington">Washington</option>
+           <option value="West Virginia">West Virginia</option>
+           <option value="Wisconsin">Wisconsin</option>
+           <option value="Wyoming">Wyoming</option>
+      
+         </select>
+    
+         <label for="subject">Subject</label>
+         <textarea id="subject" name="subject" placeholder="Let us know how you like our site!" style="height:200px"></textarea>
+    
+         <input type="submit" value="Submit">
+    
+       </form>
+     </div>
+    
+ </body>
+</html>
+
+CODE FOR POP- UPS (added to strava API)
+// Function to display explore segments on map and in table
+function displayExploreSegments(data) {
+   console.log("Displaying explore segments");
+   segmentTableBody.innerHTML = ''; // Clear table body
+   if (!tablePopulated) {
+       console.log("Populating table headers");
+       // Add table headers only if it's the first time populating the table
+       populateTableHeader();
+       tablePopulated = true; // Set flag to true
+   }
+   // Add data rows
+   data.segments.forEach((segment, index) => {
+       console.log("Populating data row for segment", segment.name);
+       const row = segmentTableBody.insertRow();
+       const numberCell = row.insertCell(0);
+       const nameCell = row.insertCell(1);
+       const distanceCell = row.insertCell(2);
+       const avgGradeCell = row.insertCell(3);
+       const climbCategoryCell = row.insertCell(4);
+       const elev_differenceCell = row.insertCell(5);
+
+
+
+
+       numberCell.textContent = index + 1;
+       nameCell.textContent = segment.name || "-"; // Use "-" if segment name is missing
+       distanceCell.textContent = segment.distance || "-"; // Use "-" if distance is missing
+       avgGradeCell.textContent = segment.avg_grade || "-"; // Use "-" if average grade is missing
+       climbCategoryCell.textContent = segment.climb_category || "-"; // Use "-" if climb category is missing
+       elev_differenceCell.textContent = segment.elev_difference || "-"; // Use "-" if elevation difference is missing
+
+
+
+
+       // Display segment on map and add popup
+       if (segment.points && segment.points.length > 0) {
+           const coordinates = L.Polyline.fromEncoded(segment.points).getLatLngs();
+           const polyline = L.polyline(coordinates, {
+               color: "blue",
+               weight: 4,
+               opacity: .7,
+               lineJoin: 'round'
+           }).addTo(map);
+
+
+           // Add popup to the polyline
+           const popupContent = `
+               <strong>${segment.name || "Unnamed Segment"}</strong><br>
+               Distance: ${segment.distance || "-"}<br>
+               Average Grade: ${segment.avg_grade || "-"}<br>
+               Climb Category: ${segment.climb_category || "-"}<br>
+               Elevation Difference: ${segment.elev_difference || "-"}
+           `;
+           polyline.bindPopup(popupContent);
+       }
+   });
+}
+
+
+//Strave
+
+Strava_api.js
+// Constants
+const auth_link = "https://www.strava.com/oauth/token";
+const segmentTable = document.createElement('table');
+const segmentTableBody = document.createElement('tbody');
+segmentTable.appendChild(segmentTableBody);
+document.body.appendChild(segmentTable);
+let tablePopulated = false;
+
+
+// Function to get activities from user's link
+function getActivities(res) {
+    const activities_link = `https://www.strava.com/api/v3/athlete/activities?access_token=${res.access_token}`;
+    fetch(activities_link)
+        .then(res => res.json())
+        .then(data => {
+            displayActivities(data);
+        })
+        .catch(error => console.error("Error fetching activities:", error));
+}
+
+
+// Function to display activities on map
+function displayActivities(data) {
+    data.forEach(activity => {
+        if (activity.map && activity.map.summary_polyline) {
+            const coordinates = L.Polyline.fromEncoded(activity.map.summary_polyline).getLatLngs();
+            L.polyline(coordinates, {
+                color: "green",
+                weight: 5,
+                opacity: .7,
+                lineJoin: 'round'
+            }).addTo(map);
+        }
+    });
+}
+
+
+// Function to fetch explore segments
+function fetchExploreSegments(bounds, access_token) {
+    const boundsStr = `${bounds.getSouth()},${bounds.getWest()},${bounds.getNorth()},${bounds.getEast()}`;
+    const explore_segments_link = `https://www.strava.com/api/v3/segments/explore?access_token=${access_token}&bounds=${boundsStr}`;
+    fetch(explore_segments_link)
+        .then(res => res.json())
+        .then(data => {
+            displayExploreSegments(data);
+        })
+        .catch(error => {
+            console.error("Error fetching explore segments:", error);
+        });
+}
+
+
+// Function to display explore segments on map and in table
+function displayExploreSegments(data) {
+    console.log("Displaying explore segments");
+    segmentTableBody.innerHTML = ''; // Clear table body
+    if (!tablePopulated) {
+        console.log("Populating table headers");
+        // Add table headers only if it's the first time populating the table
+        populateTableHeader();
+        tablePopulated = true; // Set flag to true
+    }
+    // Add data rows
+    data.segments.forEach((segment, index) => {
+        console.log("Populating data row for segment", segment.name);
+        const row = segmentTableBody.insertRow();
+        const numberCell = row.insertCell(0);
+        const nameCell = row.insertCell(1);
+        const distanceCell = row.insertCell(2);
+        const avgGradeCell = row.insertCell(3);
+        const climbCategoryCell = row.insertCell(4);
+        const elev_differenceCell = row.insertCell(5);
+
+
+        numberCell.textContent = index + 1;
+        nameCell.textContent = segment.name || "-"; // Use "-" if segment name is missing
+        distanceCell.textContent = segment.distance || "-"; // Use "-" if distance is missing
+        avgGradeCell.textContent = segment.avg_grade || "-"; // Use "-" if average grade is missing
+        climbCategoryCell.textContent = segment.climb_category || "-"; // Use "-" if climb category is missing
+        elev_differenceCell.textContent = segment.elev_difference || "-"; // Use "-" if elevation difference is missing
+
+
+        // Display segment on map
+        if (segment.points && segment.points.length > 0) {
+            const coordinates = L.Polyline.fromEncoded(segment.points).getLatLngs();
+            L.polyline(coordinates, {
+                color: "blue",
+                weight: 4,
+                opacity: .7,
+                lineJoin: 'round'
+            }).addTo(map);
+
+
+		RIGHT HERE IS WHERE IT GOES ETHAN!
+        }
+    });
+}
+
+
+// Function to populate table header
+function populateTableHeader() {
+    // Add table headers
+    const headers = ['No.', 'Name', 'Distance (m)', 'Average Grade', 'Climb Category', 'Elevation Difference'];
+    const headerRow = segmentTable.createTHead().insertRow();
+    headers.forEach(headerText => {
+        const th = document.createElement('th');
+        th.textContent = headerText;
+        headerRow.appendChild(th);
+    });
+}
+
+
+// Function to reauthorize and initiate the process
+function reAuthorize() {
+    fetch(auth_link, {
+        method: 'post',
+        headers: {
+            'Accept': 'application/json, text/plain, */*',
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+            client_id: '123531',
+            client_secret: '5f13787dc01db562f107d5aa36f9fee2541e1eb8',
+            refresh_token: '7e98198ecd3c435434e701f79e4fce33f942e9b5',
+            grant_type: 'refresh_token'
+        })
+    })
+        .then(res => res.json())
+        .then(res => {
+            // Get input values for starting coordinates and zoom level
+            const startLat = parseFloat(document.getElementById('startLat').value);
+            const startLng = parseFloat(document.getElementById('startLng').value);
+            const zoomLevel = parseInt(document.getElementById('zoomLevel').value);
+
+
+            // Set map view to user's input
+            map.setView([startLat, startLng], zoomLevel);
+
+
+            // Fetch segments after a short delay to ensure map view is fully initialized
+            setTimeout(() => {
+                fetchExploreSegments(map.getBounds(), res.access_token);
+            }, 500);
+        })
+        .catch(error => console.error("Error during reauthorization:", error));
+}
+
+
+// Add street-level basemap
+const map = L.map('map');
+L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+    attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+}).addTo(map);
+
+
+// Event listener for submit button
+document.getElementById('submitBtn').addEventListener('click', function () {
+    reAuthorize();
+});
+
+
+// Initiate the process
+reAuthorize();
+// Polyline Code
+
+ * Utility functions to decode/encode numbers and array's of numbers
+ * to/from strings (Google maps polyline encoding)
+ *
+ * Extends the L.Polyline and L.Polygon object with methods to convert
+ * to and create from these strings.
+ *
+ * Jan Pieter Waagmeester <jieter@jieter.nl>
+ *
+ * Original code from:
+ * http://facstaff.unca.edu/mcmcclur/GoogleMaps/EncodePolyline/
+ * (which is down as of december 2014)
+ */
+
+
+// MIT License
+
+
+// Copyright (c) 2016 Jan Pieter Waagmeester
+
+
+// Permission is hereby granted, free of charge, to any person obtaining a copy
+// of this software and associated documentation files (the "Software"), to deal
+// in the Software without restriction, including without limitation the rights
+// to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+// copies of the Software, and to permit persons to whom the Software is
+// furnished to do so, subject to the following conditions:
+
+
+// The above copyright notice and this permission notice shall be included in all
+// copies or substantial portions of the Software.
+
+
+// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+// IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+// FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+// AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+// LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+// OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+// SOFTWARE.
+
+
+(function () {
+    'use strict';
+
+
+    var defaultOptions = function (options) {
+        if (typeof options === 'number') {
+            // Legacy
+            options = {
+                precision: options
+            };
+        } else {
+            options = options || {};
+        }
+
+
+        options.precision = options.precision || 5;
+        options.factor = options.factor || Math.pow(10, options.precision);
+        options.dimension = options.dimension || 2;
+        return options;
+    };
+
+
+    var PolylineUtil = {
+        encode: function (points, options) {
+            options = defaultOptions(options);
+
+
+            var flatPoints = [];
+            for (var i = 0, len = points.length; i < len; ++i) {
+                var point = points[i];
+
+
+                if (options.dimension === 2) {
+                    flatPoints.push(point.lat || point[0]);
+                    flatPoints.push(point.lng || point[1]);
+                } else {
+                    for (var dim = 0; dim < options.dimension; ++dim) {
+                        flatPoints.push(point[dim]);
+                    }
+                }
+            }
+
+
+            return this.encodeDeltas(flatPoints, options);
+        },
+
+
+        decode: function (encoded, options) {
+            options = defaultOptions(options);
+
+
+            var flatPoints = this.decodeDeltas(encoded, options);
+
+
+            var points = [];
+            for (var i = 0, len = flatPoints.length; i + (options.dimension - 1) < len;) {
+                var point = [];
+
+
+                for (var dim = 0; dim < options.dimension; ++dim) {
+                    point.push(flatPoints[i++]);
+                }
+
+
+                points.push(point);
+            }
+
+
+            return points;
+        },
+
+
+        encodeDeltas: function (numbers, options) {
+            options = defaultOptions(options);
+
+
+            var lastNumbers = [];
+
+
+            for (var i = 0, len = numbers.length; i < len;) {
+                for (var d = 0; d < options.dimension; ++d, ++i) {
+                    var num = numbers[i].toFixed(options.precision);
+                    var delta = num - (lastNumbers[d] || 0);
+                    lastNumbers[d] = num;
+
+
+                    numbers[i] = delta;
+                }
+            }
+
+
+            return this.encodeFloats(numbers, options);
+        },
+
+
+        decodeDeltas: function (encoded, options) {
+            options = defaultOptions(options);
+
+
+            var lastNumbers = [];
+
+
+            var numbers = this.decodeFloats(encoded, options);
+            for (var i = 0, len = numbers.length; i < len;) {
+                for (var d = 0; d < options.dimension; ++d, ++i) {
+                    numbers[i] = Math.round((lastNumbers[d] = numbers[i] + (lastNumbers[d] || 0)) * options.factor) / options.factor;
+                }
+            }
+
+
+            return numbers;
+        },
+
+
+        encodeFloats: function (numbers, options) {
+            options = defaultOptions(options);
+
+
+            for (var i = 0, len = numbers.length; i < len; ++i) {
+                numbers[i] = Math.round(numbers[i] * options.factor);
+            }
+
+
+            return this.encodeSignedIntegers(numbers);
+        },
+
+
+        decodeFloats: function (encoded, options) {
+            options = defaultOptions(options);
+
+
+            var numbers = this.decodeSignedIntegers(encoded);
+            for (var i = 0, len = numbers.length; i < len; ++i) {
+                numbers[i] /= options.factor;
+            }
+
+
+            return numbers;
+        },
+
+
+        encodeSignedIntegers: function (numbers) {
+            for (var i = 0, len = numbers.length; i < len; ++i) {
+                var num = numbers[i];
+                numbers[i] = (num < 0) ? ~(num << 1) : (num << 1);
+            }
+
+
+            return this.encodeUnsignedIntegers(numbers);
+        },
+
+
+        decodeSignedIntegers: function (encoded) {
+            var numbers = this.decodeUnsignedIntegers(encoded);
+
+
+            for (var i = 0, len = numbers.length; i < len; ++i) {
+                var num = numbers[i];
+                numbers[i] = (num & 1) ? ~(num >> 1) : (num >> 1);
+            }
+
+
+            return numbers;
+        },
+
+
+        encodeUnsignedIntegers: function (numbers) {
+            var encoded = '';
+            for (var i = 0, len = numbers.length; i < len; ++i) {
+                encoded += this.encodeUnsignedInteger(numbers[i]);
+            }
+            return encoded;
+        },
+
+
+        decodeUnsignedIntegers: function (encoded) {
+            var numbers = [];
+
+
+            var current = 0;
+            var shift = 0;
+
+
+            for (var i = 0, len = encoded.length; i < len; ++i) {
+                var b = encoded.charCodeAt(i) - 63;
+
+
+                current |= (b & 0x1f) << shift;
+
+
+                if (b < 0x20) {
+                    numbers.push(current);
+                    current = 0;
+                    shift = 0;
+                } else {
+                    shift += 5;
+                }
+            }
+
+
+            return numbers;
+        },
+
+
+        encodeSignedInteger: function (num) {
+            num = (num < 0) ? ~(num << 1) : (num << 1);
+            return this.encodeUnsignedInteger(num);
+        },
+
+
+        // This function is very similar to Google's, but I added
+        // some stuff to deal with the double slash issue.
+        encodeUnsignedInteger: function (num) {
+            var value, encoded = '';
+            while (num >= 0x20) {
+                value = (0x20 | (num & 0x1f)) + 63;
+                encoded += (String.fromCharCode(value));
+                num >>= 5;
+            }
+            value = num + 63;
+            encoded += (String.fromCharCode(value));
+
+
+            return encoded;
+        }
+    };
+
+
+    // Export Node module
+    if (typeof module === 'object' && typeof module.exports === 'object') {
+        module.exports = PolylineUtil;
+    }
+
+
+    // Inject functionality into Leaflet
+    if (typeof L === 'object') {
+        if (!(L.Polyline.prototype.fromEncoded)) {
+            L.Polyline.fromEncoded = function (encoded, options) {
+                return L.polyline(PolylineUtil.decode(encoded), options);
+            };
+        }
+        if (!(L.Polygon.prototype.fromEncoded)) {
+            L.Polygon.fromEncoded = function (encoded, options) {
+                return L.polygon(PolylineUtil.decode(encoded), options);
+            };
+        }
+
+
+        var encodeMixin = {
+            encodePath: function () {
+                return PolylineUtil.encode(this.getLatLngs());
+            }
+        };
+
+
+        if (!L.Polyline.prototype.encodePath) {
+            L.Polyline.include(encodeMixin);
+        }
+        if (!L.Polygon.prototype.encodePath) {
+            L.Polygon.include(encodeMixin);
+        }
+
+
+        L.PolylineUtil = PolylineUtil;
+    }
+})();
 
